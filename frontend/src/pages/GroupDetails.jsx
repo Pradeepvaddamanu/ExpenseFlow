@@ -190,15 +190,21 @@ function GroupDetails() {
   const fetchSettlement = async () => {
     try {
       const response = await api.get(
-        `/groups/${groupId}/optimized-settlement`
+        `/groups/${groupId}/optimized-settlement`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
-
+  
+      console.log("Settlement:", response.data);
+  
       setSettlements(response.data);
     } catch (error) {
       console.log(error);
     }
   };
-
   useEffect(() => {
     fetchMembers();
     fetchExpenses();
@@ -465,6 +471,7 @@ function GroupDetails() {
               </button>
   
             </div>
+            <p>Settlements Found: {settlements.length}</p>
   
             {settlements.map((settlement) => (
   <div
