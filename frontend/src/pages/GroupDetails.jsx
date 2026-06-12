@@ -65,27 +65,9 @@ function GroupDetails() {
     }
   };
   const scanReceipt = async () => {
-    try {
-      setScanning(true);
-  
-      const formData = new FormData();
-      formData.append("file", receipt);
-  
-      const response = await api.post(
-        "/ocr-receipt",
-        formData
-      );
-      console.log(response.data);
-  
-      setAmount(response.data.amount);
-      setDescription(response.data.description);
-      setCategory(response.data.category);
-  
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setScanning(false);
-    }
+    alert(
+      "Receipt scanning is currently unavailable in the cloud version. Please enter expense details manually."
+    );
   };
   const fetchExpenses = async () => {
     try {
