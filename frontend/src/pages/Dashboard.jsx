@@ -342,14 +342,11 @@ function Dashboard() {
       </p>
 
       <p className="text-sm text-slate-400">
-      {new Date(activity.created_at).toLocaleString("en-IN", {
-  timeZone: "Asia/Kolkata",
-  day: "numeric",
-  month: "short",
-  hour: "numeric",
-  minute: "2-digit",
-})}
-  
+  {new Date(activity.created_at).toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  })}
 </p>
     </div>
   ))
