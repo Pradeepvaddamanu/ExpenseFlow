@@ -9,9 +9,7 @@ function GroupDetails() {
   const [memberName, setMemberName] = useState("");
   const [insight, setInsight] = useState("");
   const [loadingAI, setLoadingAI] = useState(false);
-  const [receipt, setReceipt] = useState(null);
-  const [category, setCategory] = useState("");
-  const [scanning, setScanning] = useState(false);
+  
 
   const [expenses, setExpenses] = useState([]);
   const [paidBy, setPaidBy] = useState("");
@@ -64,11 +62,7 @@ function GroupDetails() {
       console.log(error);
     }
   };
-  const scanReceipt = async () => {
-    alert(
-      "Receipt scanning is currently unavailable in the cloud version. Please enter expense details manually."
-    );
-  };
+  
   const fetchExpenses = async () => {
     try {
       const response = await api.get(
@@ -288,35 +282,7 @@ function GroupDetails() {
             <h2 className="text-2xl font-semibold mb-4">
               Add Expense
             </h2>
-            <input
-  type="file"
-  onChange={(e) =>
-    setReceipt(e.target.files[0])
-  }
-  className="hidden"
-  id="receiptUpload"
-/>
 
-<label
-  htmlFor="receiptUpload"
-  className="cursor-pointer flex items-center justify-between border-2 border-dashed border-purple-300 bg-purple-50 hover:bg-purple-100 rounded-xl p-4 transition"
->
-  <span className="text-slate-600">
-    {receipt
-      ? `📄 ${receipt.name}`
-      : "Upload Receipt or Screenshot"}
-  </span>
-
-  <span className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium shadow">
-  📁 Browse
-</span>
-</label>
-
-{receipt && (
-  <p className="text-green-600 text-sm mt-2">
-    ✓ File selected successfully
-  </p>
-)}
             
   
             <div className="space-y-3">
@@ -350,28 +316,7 @@ function GroupDetails() {
                 }
                 className="border p-3 rounded-lg w-full"
               />
-              <input
-  value={category}
-  onChange={(e) =>
-    setCategory(e.target.value)
-  }
-  placeholder="Category"
-  className="border p-3 rounded-lg w-full"
-/>
-<button
-  onClick={scanReceipt}
-  disabled={scanning}
-  className="bg-purple-600 text-white px-4 py-2 rounded-lg disabled:opacity-60"
->
-  {scanning
-    ? "🔄 Scanning..."
-    : "✨ Scan Receipt"}
-</button>
-{scanning && (
-  <p className="text-purple-600 text-sm mt-2">
-    Extracting receipt details...
-  </p>
-)}
+              
   
               <button
                 onClick={addExpense}

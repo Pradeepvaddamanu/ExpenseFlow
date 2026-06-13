@@ -6,8 +6,6 @@ from database import get_db
 from models import Group
 from models import Expense
 from fastapi import UploadFile, File
-from PIL import Image
-import pytesseract
 import re
 from routes.ai import parse_expense_with_ai
 import json
@@ -103,80 +101,8 @@ def dashboard_stats(
         "members": total_members,
         "expenses": total_expenses
     }
-@router.post("/ocr-receipt")
-def scan_receipt(
-    file: UploadFile = File(...)
-):
-
-    pytesseract.pytesseract.tesseract_cmd = (
-        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-    )
-
-    image = Image.open(file.file)
-
-    image = image.convert("L")
-
-    text = pytesseract.image_to_string(
-        image,
-        config="--psm 6"
-    )
-
-    amount_match = re.search(
-    r"(?:₹|Rs\.?|INR|%)\s*(\d+(?:\.\d+)?)",
-    text,
-    re.IGNORECASE
-)
-
-    detected_amount = (
-    float(amount_match.group(1))
-    if amount_match
-    else 0
-)
 
     
-
-
-
-    response = client.chat.completions.create(
-        model="llama-3.3-70b-versatile",
-            messages=[
-            {
-            "role": "user",
-            "content": f"""
-Extract the following from this OCR text:
-
-- merchant
-- category
-- description
-
-Important:
-Do NOT extract amount.
-Amount already detected as: {detected_amount}
-
-Return ONLY valid JSON.
-OCR TEXT:
-{text}
-"""
-        }
-    ]
-)
-
-    ai_result = response.choices[0].message.content
-
-    ai_result = ai_result.replace(
-    "```json", ""
-).replace(
-    "```", ""
-).strip()
-
-    data = json.loads(ai_result)
-
-    if detected_amount > 0:
-        data["amount"] = detected_amount
-    print("Detected Amount:", detected_amount)
-    print("AI Result:", data)
-
-    return data
 
 
 @router.post("/groups/{group_id}/members")
