@@ -10,11 +10,16 @@ client = Groq(
 
 @router.post("/ai-insights")
 def ai_insights(data: dict):
-
+    
     prompt = f"""
 Analyze the following expense data:
 
 {data}
+
+IMPORTANT:
+- All amounts are in Indian Rupees (₹).
+- Never use $ or USD.
+- Always display currency as ₹.
 
 Generate a concise report with:
 
@@ -27,6 +32,8 @@ Generate a concise report with:
 
 Keep the response under 8 bullet points.
 """
+
+    
     response = client.chat.completions.create(
         model="llama-3.3-70b-versatile",
         messages=[

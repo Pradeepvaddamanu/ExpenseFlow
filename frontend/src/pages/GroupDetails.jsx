@@ -22,6 +22,7 @@ function GroupDetails() {
   const [editPaidBy, setEditPaidBy] = useState("");
 
   const [settlements, setSettlements] = useState([]);
+  const [settlementLoading, setSettlementLoading] = useState(false);
 
   const token = localStorage.getItem("token");
 
@@ -96,6 +97,7 @@ function GroupDetails() {
       setDescription("");
 
       fetchExpenses();
+      fetchSettlement();
     } catch (error) {
       console.log(error);
     }
@@ -165,25 +167,24 @@ function GroupDetails() {
 
   const fetchSettlement = async () => {
     try {
+      setSettlementLoading(true);
+  
       const response = await api.get(
-        `/groups/${groupId}/optimized-settlement`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        `/groups/${groupId}/optimized-settlement`
       );
   
-      console.log("Settlement:", response.data);
-  
       setSettlements(response.data);
+  
     } catch (error) {
       console.log(error);
+    } finally {
+      setSettlementLoading(false);
     }
   };
   useEffect(() => {
     fetchMembers();
     fetchExpenses();
+    fetchSettlement();
   }, []);
 
   return (
@@ -391,53 +392,76 @@ function GroupDetails() {
               </h2>
   
               <button
-                onClick={fetchSettlement}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg"
-              >
-                Calculate
-              </button>
+  onClick={fetchSettlement}
+  disabled={settlementLoading}
+  className="bg-green-600 text-white px-4 py-2 rounded-lg"
+>
+  {settlementLoading
+    ? "Calculating..."
+    : "Calculate"}
+</button>
   
             </div>
-            <p>Settlements Found: {settlements.length}</p>
-  
-            {settlements.map((settlement) => (
-  <div
-    key={`${settlement.from}-${settlement.to}`}
-    className="bg-gradient-to-r from-emerald-50 to-green-50 border border-green-100 rounded-2xl p-4 shadow-sm mb-3"
-  >
-    <div className="flex items-center justify-between">
-      <div>
-        <p className="text-sm text-slate-500">
-          Needs to Pay
-        </p>
+            <p className="mb-3 text-slate-500">
+  Settlements Found: {settlements.length}
+</p>
 
-        <h3 className="font-bold text-lg">
-          {settlement.from}
-        </h3>
-      </div>
+{settlements.length === 0 ? (
 
-      <div className="text-2xl">
-        →
-      </div>
+  <div className="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
 
-      <div className="text-right">
-        <p className="text-sm text-slate-500">
-          Receives
-        </p>
+    <p className="text-green-700 font-semibold">
+      ✅ Everyone has paid their fair share
+    </p>
 
-        <h3 className="font-bold text-lg">
-          {settlement.to}
-        </h3>
-      </div>
-    </div>
+    <p className="text-sm text-slate-500 mt-1">
+      No settlement required
+    </p>
 
-    <div className="mt-4 text-center">
-      <span className="text-3xl font-bold text-emerald-600">
-        ₹{settlement.amount}
-      </span>
-    </div>
   </div>
-))}
+
+) : (
+
+  settlements.map((settlement) => (
+    <div
+      key={`${settlement.from}-${settlement.to}`}
+      className="bg-gradient-to-r from-emerald-50 to-green-50 border border-green-100 rounded-2xl p-4 shadow-sm mb-3"
+    >
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-slate-500">
+            Needs to Pay
+          </p>
+
+          <h3 className="font-bold text-lg">
+            {settlement.from}
+          </h3>
+        </div>
+
+        <div className="text-2xl">
+          →
+        </div>
+
+        <div className="text-right">
+          <p className="text-sm text-slate-500">
+            Receives
+          </p>
+
+          <h3 className="font-bold text-lg">
+            {settlement.to}
+          </h3>
+        </div>
+      </div>
+
+      <div className="mt-4 text-center">
+        <span className="text-3xl font-bold text-emerald-600">
+          ₹{settlement.amount}
+        </span>
+      </div>
+    </div>
+  ))
+
+)}
             
   
           </div>
