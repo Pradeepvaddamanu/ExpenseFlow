@@ -7,7 +7,6 @@ from models import Group
 from models import Expense
 from fastapi import UploadFile, File
 import re
-from routes.ai import parse_expense_with_ai
 import json
 from groq import Groq
 import os
