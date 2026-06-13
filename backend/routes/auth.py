@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from schemas.login import UserLogin
 from utils.jwt_handler import create_access_token
 from utils.security import verify_password
+from utils.email_sender import send_welcome_email
 
 from database import get_db
 from models import User
@@ -41,6 +42,14 @@ def register(user_data: UserCreate, db: Session = Depends(get_db)):
 
     db.add(user)
     db.commit()
+
+    try:
+        send_welcome_email(
+            user.email,
+            user.name
+        )
+    except Exception as e:
+        print("Email error:", e)
 
     return {"message": "User Registered Successfully"}
 @router.post("/login")
