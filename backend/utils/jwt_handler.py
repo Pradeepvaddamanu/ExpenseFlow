@@ -1,8 +1,7 @@
-import os
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 
-SECRET_KEY = os.getenv("SECRET_KEY")
+SECRET_KEY = "expenseflow-secret-key"
 ALGORITHM = "HS256"
 
 
